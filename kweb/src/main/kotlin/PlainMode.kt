@@ -9,15 +9,18 @@ import java.util.concurrent.Executors
 
 fun startPlainServer(port: Int, provider: DataProvider) {
     val server = HttpServer.create(InetSocketAddress(port), 0)
+
     server.createContext("/next") { exchange ->
         handleNext(exchange, provider)
     }
+
     server.createContext("/shutdown") { exchange ->
         handleShutdown(exchange) {
             server.stop(0)
             (server.executor as? ExecutorService)?.shutdown()
         }
     }
+
     server.executor = Executors.newSingleThreadExecutor()
     server.start()
 }
